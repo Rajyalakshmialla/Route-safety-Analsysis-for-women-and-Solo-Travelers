@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Women Route Safety</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a href="#home" class="brand">
+        <span class="brand-mark">WS</span>
+        <span>Women Route Safety</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#route-planner">Route Map</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#report-crime">Report Crime</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Safer movement, clearer decisions</p>
+          <h1>Plan routes, review risk, and report incidents from one place.</h1>
+          <p class="hero-text">
+            This app combines route visualization with a lightweight public reporting dashboard so users can
+            plan smarter trips and quickly flag suspicious or unsafe activity.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#route-planner">Open Route Planner</a>
+            <a class="button button-secondary" href="#report-crime">Report an Incident</a>
+          </div>
+        </div>
+
+        <aside class="hero-panel">
+          <div class="metric-card">
+            <span class="metric-label">Coverage</span>
+            <strong>Route risk map</strong>
+            <p>Visual route segments remain color-coded as safe, moderate, or unsafe.</p>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Dashboard</span>
+            <strong>User crime reports</strong>
+            <p>Residents can submit quick reports and see the latest entries in one place.</p>
+          </div>
+          <div class="metric-card accent-card">
+            <span class="metric-label">Action</span>
+            <strong>Use map + reporting together</strong>
+            <p>Search a route, review the route color, then log new incidents if anything is observed.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section id="route-planner" class="content-block planner-block">
+        <div class="section-heading">
+          <p class="eyebrow">Route Planner</p>
+          <h2>Search a route without changing the map logic.</h2>
+        </div>
+
+        <div class="planner-grid">
+          <div class="planner-panel">
+            <label for="source">Source</label>
+            <input type="text" id="source" placeholder="Source (e.g. Chennai)">
+
+            <label for="dest">Destination</label>
+            <input type="text" id="dest" placeholder="Destination (e.g. Mumbai)">
+
+            <button class="button button-primary button-full" onclick="getRoute()">Find Safe Route</button>
+
+            <div class="legend">
+              <div><span class="legend-dot safe"></span> Safe</div>
+              <div><span class="legend-dot moderate"></span> Moderate</div>
+              <div><span class="legend-dot unsafe"></span> Unsafe</div>
+            </div>
+          </div>
+
+          <div class="map-card">
+            <div class="map-header">
+              <div>
+                <p class="eyebrow">Live Map</p>
+                <h3>Route Risk View</h3>
+              </div>
+              <p class="map-note">The route map rendering code remains active here.</p>
+            </div>
+            <div id="map"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboard" class="content-block dashboard-block">
+        <div class="section-heading">
+          <p class="eyebrow">Community Dashboard</p>
+          <h2>Recent user-submitted crime and safety reports.</h2>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="dashboard-card">
+            <p class="stat-label">Total Reports</p>
+            <strong id="totalReports">0</strong>
+            <span>Reports saved in this browser</span>
+          </article>
+          <article class="dashboard-card">
+            <p class="stat-label">High Severity</p>
+            <strong id="highSeverityReports">0</strong>
+            <span>Critical or urgent incident reports</span>
+          </article>
+          <article class="dashboard-card">
+            <p class="stat-label">Latest Area</p>
+            <strong id="latestArea">No reports yet</strong>
+            <span>Most recent submitted location</span>
+          </article>
+        </div>
+
+        <div class="reports-panel">
+          <div class="reports-header">
+            <h3>Latest Reports</h3>
+            <p>New reports appear here after submission.</p>
+          </div>
+          <div id="reportList" class="report-list"></div>
+        </div>
+      </section>
+
+      <section id="report-crime" class="content-block report-block">
+        <div class="section-heading">
+          <p class="eyebrow">Report Crime</p>
+          <h2>Let users log what they saw.</h2>
+        </div>
+
+        <form id="reportForm" class="report-form">
+          <div class="form-grid">
+            <label>
+              <span>Area</span>
+              <input type="text" id="reportArea" placeholder="Area or district" required>
+            </label>
+
+            <label>
+              <span>Crime Type</span>
+              <input type="text" id="reportType" placeholder="Harassment, theft, assault..." required>
+            </label>
+
+            <label>
+              <span>Severity</span>
+              <select id="reportSeverity" required>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </label>
+
+            <label>
+              <span>Time Seen</span>
+              <input type="datetime-local" id="reportTime" required>
+            </label>
+          </div>
+
+          <label class="textarea-field">
+            <span>Description</span>
+            <textarea id="reportDescription" rows="4" placeholder="Describe what happened or what was observed." required></textarea>
+          </label>
+
+          <div class="form-footer">
+            <button type="submit" class="button button-primary">Submit Report</button>
+            <p id="reportStatus" class="form-status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
